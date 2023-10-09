@@ -3,6 +3,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
 
+use function PHPUnit\Framework\returnValue;
 
 class ProductController extends BaseController {
 
@@ -11,8 +12,8 @@ class ProductController extends BaseController {
     }
     public function insertProduct() {
         $data = [
-            'nama_product' => 'Hewan', 
-            'description' => 'Kucing'
+            'nama_product' => 'Laptop Lenovo', 
+            'description' => 'Ideapad Gaming 3'
         ];
 
         $this->product->insertProduct($data);
@@ -25,4 +26,32 @@ class ProductController extends BaseController {
         ];
         return view('product', $data);
     }
+    
+    public function getProduct($id){
+        $product = $this->product->where('id',$id)->first();
+        $data = [
+            'product' => $product
+        ];
+        return view('edit_product', $data);
+    }
+
+    public function updateProduct($id){
+        $nama_product = $this->request->getVar('nama_product');
+        $description = $this->request->getVar('description');
+
+        $data = [
+            'nama_product' => $nama_product,
+            'description' => $description
+        ];
+        $this->product->update($id, $data);
+        return redirect()->to(base_url('products'));
+    }
+
+    public function deleteProduct($id){
+        $this->product->delete($id);
+        return redirect()->to(base_url('products'));
+    }
+
+    
+    
 }
