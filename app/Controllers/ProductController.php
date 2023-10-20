@@ -2,10 +2,14 @@
 namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
+use CodeIgniter\API\ResponseTrait;
 
-use function PHPUnit\Framework\returnValue;
+
+
+
 
 class ProductController extends BaseController {
+    use ResponseTrait;
 
     public function __construct(){
         $this->product = new ProductModel();
@@ -26,6 +30,8 @@ class ProductController extends BaseController {
         ];
         return view('product', $data);
     }
+
+
     
     public function getProduct($id){
         $product = $this->product->where('id',$id)->first();
@@ -33,6 +39,37 @@ class ProductController extends BaseController {
             'product' => $product
         ];
         return view('edit_product', $data);
+    }
+
+    public function readProductAPI(){
+        $products =$this->product->findAll();
+        
+        return $this->respond([
+            'code' => 200,
+            'status' => 'OK',
+            'data' => $products
+        ]);
+    }
+
+    public function getProductAPI($id){
+        $product = $this->product->where('id',$id)->first();
+
+        if (!$product){
+            $this->response->setStatusCode(404);
+            return $this->response->setJSON(
+                [
+                    'code' => 404,
+                    'status' => 'NOT FOUND',
+                    'data' => 'product not found'
+                ]
+            );
+        }
+
+        return $this->respond([
+            'code' => 200,
+            'status' => 'OK',
+            'data' => $product
+        ]);
     }
 
     public function updateProduct($id){

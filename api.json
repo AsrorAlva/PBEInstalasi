@@ -1,0 +1,13 @@
+{
+    "nama_depan" : "Asror",
+    "Umur" : 19,
+    "Alamat" : [
+        {
+            "id" : 1,
+            "no_rumah" : 007,
+            "jalan" : "Anggrek"
+        }
+    ]
+  
+}
+
