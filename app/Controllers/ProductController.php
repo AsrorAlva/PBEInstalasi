@@ -3,10 +3,7 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
 use CodeIgniter\API\ResponseTrait;
-
-
-
-
+use PHPUnit\Framework\Constraint\IsNull;
 
 class ProductController extends BaseController {
     use ResponseTrait;
@@ -20,7 +17,47 @@ class ProductController extends BaseController {
             'description' => 'Ideapad Gaming 3'
         ];
 
-        $this->product->insertProduct($data);
+        $this->product->insertProductORM($data);
+    }
+
+    public function insertProductApi(){
+        $requestData = $this->request->getJSON();
+
+        $validation = $this->validate([
+            'nama_product' => 'required',
+            'description' => 'required'
+        ]);
+
+        if(!$validation){
+            $this->response->setStatusCode(400);
+            return $this->response->setJSON([
+                'code' => 400,
+                'status' => "BAD REQUEST",
+                'data' => null
+            ]);
+        }
+        $data = [
+            'nama_product' => $requestData->nama_product,
+            'description' => $requestData->description
+        ];
+
+        $insert = $this->product->insert($data);
+        if ($insert) {
+            return $this->respond(
+                [
+                    'code' => 200,
+                    'status' => "OK",
+                    'data' => $data
+                ]
+            );
+        } else {
+            $this->response->setStatusCode(500);
+            return $this->response->setJSON([
+                'code' => 500,
+                'status' => "INTERNAL SERVER ERROR",
+                'data' => null
+            ]);
+        }
     }
 
     public function readProduct(){
@@ -29,16 +66,6 @@ class ProductController extends BaseController {
             'products' => $products
         ];
         return view('product', $data);
-    }
-
-
-    
-    public function getProduct($id){
-        $product = $this->product->where('id',$id)->first();
-        $data = [
-            'product' => $product
-        ];
-        return view('edit_product', $data);
     }
 
     public function readProductAPI(){
@@ -51,25 +78,33 @@ class ProductController extends BaseController {
         ]);
     }
 
-    public function getProductAPI($id){
+    
+    public function getProduct($id){
         $product = $this->product->where('id',$id)->first();
+        $data = [
+            'product' => $product
+        ];
+        return view('edit_product', $data);
+    }
+
+    public function getProductApi($id){
+        $product = $this->product->where('id', $id)->first();
 
         if (!$product){
             $this->response->setStatusCode(404);
-            return $this->response->setJSON(
-                [
-                    'code' => 404,
-                    'status' => 'NOT FOUND',
-                    'data' => 'product not found'
-                ]
-            );
+            return $this->response->setJSON([
+                'code' => 404,
+                'status' => "NOT FOUND",
+                'data' => "product not found"
+            ]);
         }
-
-        return $this->respond([
-            'code' => 200,
-            'status' => 'OK',
-            'data' => $product
-        ]);
+        return $this->respond(
+            [
+                'code' => 200,
+                'status' => "OK",
+                'data' => $product
+            ]
+        );
     }
 
     public function updateProduct($id){

@@ -1,13 +1,14 @@
 {
-    "nama_depan" : "Asror",
-    "Umur" : 19,
-    "Alamat" : [
+    "code" : 404,
+    "status" : "NOT FOUND",
+    "data" : [
         {
-            "id" : 1,
-            "no_rumah" : 007,
-            "jalan" : "Anggrek"
+            "nama_depan" : "Asror",
+            "tanggal" : 20
+        },
+        {
+            "nama" : "Asror Alva",
+            "tanggal" : 20
         }
     ]
-  
 }
-
